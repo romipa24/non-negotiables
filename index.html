@@ -177,8 +177,17 @@ input.kg{font-family:var(--f-num);font-size:24px;font-weight:600;padding:8px 12p
 
 .scrim{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center}
 .sheet{width:100%;max-width:540px;max-height:88vh;overflow:auto;background:var(--panel);border:1px solid var(--line-2);border-bottom:0;border-radius:18px 18px 0 0;padding:18px max(16px,env(safe-area-inset-right,0px)) calc(20px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
-.hlist .row{display:grid;grid-template-columns:1fr auto 36px;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
-.hlist .row b{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hlist{display:flex;flex-direction:column}
+.hrow{display:grid;grid-template-columns:32px 1fr 36px;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line);background:var(--panel);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;transition:transform .18s ease}
+.hrow.drag{transition:none;position:relative;z-index:2;background:var(--panel-2);border-radius:10px;border-color:transparent;box-shadow:0 12px 28px rgba(0,0,0,.55),0 0 0 1px rgba(237,179,106,.45)}
+.hrow.drag .grip{color:var(--bronze-hi)}
+.grip{height:44px;display:grid;place-items:center;color:var(--dim);touch-action:none;cursor:grab}
+.grip svg{width:16px;height:16px}
+.hname{text-align:left;min-width:0;padding:6px 4px;display:flex;flex-direction:column}
+.hname b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hname small{font-size:12px;color:var(--muted)}
+.hedit{padding:12px;margin:6px 0;border-radius:12px;border:1px solid rgba(237,179,106,.45);background:var(--panel-2)}
+.hedit .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .note{font-size:13px;color:var(--muted);margin:0}
 .note.warn{color:var(--bronze-hi)}
 
@@ -209,6 +218,7 @@ const I = {
   left:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
   right:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>',
   x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  grip:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.7"/><circle cx="15" cy="6" r="1.7"/><circle cx="9" cy="12" r="1.7"/><circle cx="15" cy="12" r="1.7"/><circle cx="9" cy="18" r="1.7"/><circle cx="15" cy="18" r="1.7"/></svg>',
   plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
   edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>',
   save:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></svg>',
@@ -455,11 +465,20 @@ function viewPeso(){
 }
 function sheetHabits(){
   return `<div class="sec-head" style="margin:0"><h2>Tus non negotiables</h2><button class="iconbtn" data-act="close" aria-label="Cerrar">${I.x}</button></div>
-    <div class="hlist">${S.habits.map(x=>`<div class="row"><b>${esc(x.name)}</b><span class="muted" style="font-size:12px">${x.type==='weekly'?x.target+'× semana':'cada día'}</span>
-      <button class="x ${S.armed==='h'+x.id?'armed':''}" data-act="delh" data-id="${x.id}" aria-label="${S.armed==='h'+x.id?'Toca otra vez para quitar':'Quitar'}">${I.x}</button></div>`).join('') || '<p class="note">Ninguno todavía.</p>'}</div>
+    ${S.habits.length?'<p class="note">Toca un hábito para editarlo. Mantén pulsado y arrastra para cambiar el orden.</p>':''}
+    <div class="hlist" id="hlist">${S.habits.map(x=> S.editing===x.id ? `
+      <form class="hedit form" id="eform" data-id="${x.id}">
+        <div class="field span2"><label for="e-name">Nombre</label><input id="e-name" maxlength="40" value="${esc(x.name)}" required></div>
+        <div class="field"><label for="e-type">Frecuencia</label><select id="e-type"><option value="daily" ${x.type!=='weekly'?'selected':''}>Cada día</option><option value="weekly" ${x.type==='weekly'?'selected':''}>Veces por semana</option></select></div>
+        <div class="field tgt" ${x.type==='weekly'?'':'hidden'}><label for="e-target">Veces / semana</label><input id="e-target" type="number" min="1" max="7" value="${x.target||4}"></div>
+        <div class="acts span2"><button class="btn ghost" type="button" data-act="canceledit">Cancelar</button><button class="btn" type="submit">Guardar</button></div>
+      </form>` : `
+      <div class="hrow" data-id="${x.id}"><span class="grip" aria-hidden="true">${I.grip}</span>
+        <button class="hname" data-act="edith" data-id="${x.id}"><b>${esc(x.name)}</b><small>${x.type==='weekly'?x.target+' veces por semana':'Cada día'}</small></button>
+        <button class="x ${S.armed==='h'+x.id?'armed':''}" data-act="delh" data-id="${x.id}" aria-label="${S.armed==='h'+x.id?'Toca otra vez para quitar':'Quitar'}">${I.x}</button></div>`).join('') || '<p class="note">Ninguno todavía.</p>'}</div>
     <form class="form" id="hform"><div class="field span2"><label for="h-name">Nuevo hábito</label><input id="h-name" maxlength="40" placeholder="Ej. Creatina" required></div>
       <div class="field"><label for="h-type">Frecuencia</label><select id="h-type"><option value="daily">Cada día</option><option value="weekly">Veces por semana</option></select></div>
-      <div class="field"><label for="h-target">Veces / semana</label><input id="h-target" type="number" min="1" max="7" value="4"></div>
+      <div class="field tgt" hidden><label for="h-target">Veces / semana</label><input id="h-target" type="number" min="1" max="7" value="4"></div>
       <div class="span2"><button class="btn" type="submit">Añadir</button></div></form>
     <p class="note">Quitar un hábito no borra su historial ni su récord.</p>`;
 }
@@ -481,12 +500,13 @@ function sheet(){
 
 /* ---------- render ---------- */
 function render(){
-  const keep={}; ['w-kg','w-date','goal','h-name','h-type','h-target','imp-text'].forEach(id=>{ const el=document.getElementById(id); if(el) keep[id]=el.value; });
+  const keep={}; ['w-kg','w-date','goal','h-name','h-type','h-target','e-name','e-type','e-target','imp-text'].forEach(id=>{ const el=document.getElementById(id); if(el) keep[id]=el.value; });
   const act=document.activeElement && document.activeElement.id;
   const fileInput=document.getElementById('imp-file'); const files=fileInput && fileInput.files;
   document.getElementById('main').innerHTML = S.tab==='rachas' ? viewRachas() : S.tab==='peso' ? viewPeso() : viewHoy();
   document.getElementById('overlay').innerHTML = sheet();
   Object.entries(keep).forEach(([id,v])=>{ const el=document.getElementById(id); if(el) el.value=v; });
+  syncTargetFields();
   if (files && files.length){ const f=document.getElementById('imp-file'); if (f) try { f.files=files; } catch(e){} }
   if (act){ const el=document.getElementById(act); if(el && el.type!=='file') el.focus(); }
   document.getElementById('tabs').innerHTML = [['hoy','Hábitos',I.grid],['rachas','Rachas',I.flame],['peso','Peso',I.dumbbell]]
@@ -521,9 +541,56 @@ async function importBackup(){
   apply(d); syncRecords(); save(); S.sheet=null; S.sel=todayK(); render(); toast('Copia restaurada');
 }
 
+/* ---------- habit editor: weekly target field, drag to reorder ---------- */
+function syncTargetFields(){
+  ['h-type','e-type'].forEach(id=>{ const s=document.getElementById(id); if(!s) return; const f=s.form && s.form.querySelector('.tgt'); if(f) f.hidden = s.value!=='weekly'; });
+}
+document.addEventListener('change', e=>{ if(e.target.id==='h-type'||e.target.id==='e-type') syncTargetFields(); });
+
+let drag=null, lp=null, suppressClick=0;
+function dragStart(row, y){
+  if (!row || S.editing) return;
+  const rows=[...document.querySelectorAll('#hlist .hrow')];
+  const from=rows.indexOf(row); if (from<0) return;
+  drag={row,rows,from,to:from,y0:y,step:row.offsetHeight};
+  row.classList.add('drag');
+  if (navigator.vibrate) try { navigator.vibrate(15); } catch(e){}
+}
+function dragMove(y){
+  const d=drag, dy=y-d.y0;
+  d.row.style.transform=`translateY(${dy}px)`;
+  const to=Math.max(0,Math.min(d.rows.length-1,d.from+Math.round(dy/d.step))); d.to=to;
+  d.rows.forEach((r,i)=>{ if(i===d.from) return; let s=0;
+    if (d.from<to && i>d.from && i<=to) s=-d.step; else if (to<d.from && i>=to && i<d.from) s=d.step;
+    r.style.transform = s ? `translateY(${s}px)` : ''; });
+}
+function dragEnd(){
+  const d=drag; drag=null; suppressClick=Date.now()+400;
+  if (d.to!==d.from){ const hs=S.habits.slice(); const [m]=hs.splice(d.from,1); hs.splice(d.to,0,m); S.habits=hs; save(); }
+  render();
+}
+document.addEventListener('touchstart', e=>{
+  const row=e.target.closest('#hlist .hrow'); if(!row || S.editing || e.target.closest('.x')) return;
+  const y=e.touches[0].clientY;
+  if (e.target.closest('.grip')){ dragStart(row,y); return; }
+  lp={row,y,t:setTimeout(()=>{ if(lp){ dragStart(lp.row,lp.y); lp=null; } },320)};
+},{passive:true});
+document.addEventListener('touchmove', e=>{
+  const y=e.touches[0].clientY;
+  if (drag){ e.preventDefault(); dragMove(y); return; }
+  if (lp && Math.abs(y-lp.y)>8){ clearTimeout(lp.t); lp=null; }
+},{passive:false});
+const touchEnd=()=>{ if(lp){ clearTimeout(lp.t); lp=null; } if(drag) dragEnd(); };
+document.addEventListener('touchend', touchEnd); document.addEventListener('touchcancel', touchEnd);
+document.addEventListener('contextmenu', e=>{ if(e.target.closest('#hlist')) e.preventDefault(); });
+document.addEventListener('mousedown', e=>{ const g=e.target.closest('#hlist .grip'); if(!g || drag) return; e.preventDefault(); dragStart(g.closest('.hrow'), e.clientY); });
+document.addEventListener('mousemove', e=>{ if(drag) dragMove(e.clientY); });
+document.addEventListener('mouseup', ()=>{ if(drag) dragEnd(); });
+
 /* ---------- events ---------- */
 document.getElementById('gear').innerHTML = I.save;
 document.addEventListener('click', e=>{
+  if (Date.now() < suppressClick) return;
   const b=e.target.closest('[data-act]'); if(!b) return;
   const a=b.dataset.act;
   if (a==='close' && e.target!==b && b.classList.contains('scrim')) return;
@@ -531,8 +598,10 @@ document.addEventListener('click', e=>{
   else if (a==='tab'){ S.tab=b.dataset.tab; history.replaceState(null,'','#'+S.tab); render(); window.scrollTo(0,0); }
   else if (a==='day'){ const n=key(addDays(parse(S.sel),+b.dataset.d)); S.sel = n>todayK()?todayK():n; render(); }
   else if (a==='today'){ S.sel=todayK(); render(); }
-  else if (a==='sheet'){ S.sheet=b.dataset.sheet||'habits'; S.armed=null; render(); }
-  else if (a==='close'){ S.sheet=null; S.armed=null; render(); }
+  else if (a==='sheet'){ S.sheet=b.dataset.sheet||'habits'; S.armed=null; S.editing=null; render(); }
+  else if (a==='close'){ S.sheet=null; S.armed=null; S.editing=null; render(); }
+  else if (a==='edith'){ S.editing=b.dataset.id; S.armed=null; render(); const n=document.getElementById('e-name'); if(n) n.focus(); }
+  else if (a==='canceledit'){ S.editing=null; render(); }
   else if (a==='export') exportBackup();
   else if (a==='import') arm('import', importBackup);
   else if (a==='delw') arm('w'+b.dataset.k, ()=>{ S.weights=S.weights.filter(w=>w.date!==b.dataset.k); save(); render(); toast('Peso borrado'); });
@@ -550,6 +619,11 @@ document.addEventListener('submit', e=>{
   } else if (e.target.id==='gform'){
     const raw=document.getElementById('goal').value; const g=raw===''?null:Math.round(parseFloat(raw)*10)/10;
     S.goal = g; save(); render(); toast(g?`Objetivo: ${kgf(g)} kg`:'Objetivo quitado');
+  } else if (e.target.id==='eform'){
+    const id=e.target.dataset.id, name=document.getElementById('e-name').value.trim(); if(!name) return;
+    const type=document.getElementById('e-type').value, target=Math.min(7,Math.max(1,parseInt(document.getElementById('e-target').value)||1));
+    S.habits=S.habits.map(h=>h.id!==id ? h : (type==='weekly' ? {id,name,type,target} : {id,name,type}));
+    S.editing=null; syncRecords(); save(); render(); toast('Hábito actualizado');
   } else if (e.target.id==='hform'){
     const name=document.getElementById('h-name').value.trim(); if(!name) return;
     const type=document.getElementById('h-type').value, target=Math.min(7,Math.max(1,parseInt(document.getElementById('h-target').value)||1));
