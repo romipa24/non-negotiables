@@ -29,7 +29,7 @@ if (kind === 'phrase') {
   let n = (minute >= 35 ? hour : hour - 1) - 6;
   if (process.env.PHRASE) n = Number(process.env.PHRASE) - 1;
   if (n < 0 || n >= phrases.length) { console.log('Outside the phrase hours. Nothing to send.'); process.exit(0); }
-  payload = { kind, n: n + 1, title: '🧠 MENTALIDAD 🔥', body: phrases[n] };
+  payload = { kind, n: n + 1, title: '', body: phrases[n] };
   console.log(`Phrase ${n + 1} of ${phrases.length}`);
 }
 
