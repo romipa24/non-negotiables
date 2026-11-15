@@ -1,7 +1,7 @@
 // Keeps the app working offline and shows the scheduled notifications.
 // The page itself is fetched fresh when there is a connection (so updates arrive)
 // and served from the cache when there is not.
-const CACHE = 'nn-v3';
+const CACHE = 'nn-v4';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
@@ -71,7 +71,7 @@ self.addEventListener('push', e => {
     else { msg = { title: p.title || 'Non Negotiables', body: p.body || '' }; tab = 'hoy'; }
     await self.registration.showNotification(msg.title, {
       body: msg.body, icon: 'icons/icon-192.png', badge: 'icons/icon-192.png',
-      tag: p.kind || 'nn', renotify: true, data: { tab }
+      tag: (p.kind || 'nn') + (p.n ? '-' + p.n : ''), renotify: true, data: { tab }
     });
   })());
 });

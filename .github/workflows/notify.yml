@@ -1,22 +1,23 @@
 name: Notificaciones
 
+# Times are UTC, set for the phone's time zone America/Costa_Rica (UTC-6, no daylight saving).
+# If the phone moves to another time zone, these lines and the map in notify/send.js change together.
 on:
   schedule:
-    # Monday weigh-in, aimed at 6:30 local (Madrid winter / summer, Costa Rica)
-    - cron: '27 5 * * 1'
-    - cron: '27 4 * * 1'
-    - cron: '27 12 * * 1'
-    # Daily habit reminder, aimed at 20:00 local (Madrid winter / summer, Costa Rica)
-    - cron: '57 18 * * *'
-    - cron: '57 17 * * *'
-    - cron: '57 1 * * *'
+    - cron: '27 12 * * 1'          # Monday 6:30 · weigh-in
+    - cron: '57 1 * * *'           # every day 20:00 · habits
+    - cron: '42 0-4,12-23 * * *'   # every hour 6:45 .. 22:45 · one mindset phrase each
   workflow_dispatch:
     inputs:
       kind:
         description: 'Qué aviso enviar ahora'
         type: choice
-        options: [daily, weigh]
+        options: [daily, weigh, phrase]
         default: daily
+      phrase:
+        description: 'Número de frase (solo para phrase)'
+        required: false
+        default: '1'
 
 permissions:
   contents: write
@@ -40,7 +41,10 @@ jobs:
           VAPID_PUBLIC: ${{ secrets.VAPID_PUBLIC }}
           VAPID_PRIVATE: ${{ secrets.VAPID_PRIVATE }}
           PUSH_SUBSCRIPTION: ${{ secrets.PUSH_SUBSCRIPTION }}
+          MENTALIDAD: ${{ secrets.MENTALIDAD }}
+          SCHEDULE: ${{ github.event.schedule }}
           KIND: ${{ inputs.kind }}
+          PHRASE: ${{ inputs.kind == 'phrase' && inputs.phrase || '' }}
         run: node send.js
       # GitHub pauses scheduled workflows after 60 days without commits. Keep it alive.
       - name: Keep schedule alive
