@@ -1,0 +1,55 @@
+name: Notificaciones
+
+on:
+  schedule:
+    # Monday weigh-in, aimed at 6:30 local (Madrid winter / summer, Costa Rica)
+    - cron: '27 5 * * 1'
+    - cron: '27 4 * * 1'
+    - cron: '27 12 * * 1'
+    # Daily habit reminder, aimed at 20:00 local (Madrid winter / summer, Costa Rica)
+    - cron: '57 18 * * *'
+    - cron: '57 17 * * *'
+    - cron: '57 1 * * *'
+  workflow_dispatch:
+    inputs:
+      kind:
+        description: 'Qué aviso enviar ahora'
+        type: choice
+        options: [daily, weigh]
+        default: daily
+
+permissions:
+  contents: write
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install web-push
+        working-directory: notify
+        run: npm install --no-audit --no-fund
+      - name: Send
+        working-directory: notify
+        env:
+          VAPID_PUBLIC: ${{ secrets.VAPID_PUBLIC }}
+          VAPID_PRIVATE: ${{ secrets.VAPID_PRIVATE }}
+          PUSH_SUBSCRIPTION: ${{ secrets.PUSH_SUBSCRIPTION }}
+          KIND: ${{ inputs.kind }}
+        run: node send.js
+      # GitHub pauses scheduled workflows after 60 days without commits. Keep it alive.
+      - name: Keep schedule alive
+        if: always()
+        run: |
+          last=$(git log -1 --format=%ct)
+          if [ $(( $(date +%s) - last )) -gt $(( 45 * 86400 )) ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit --allow-empty -m "keepalive"
+            git push
+          fi

@@ -201,7 +201,7 @@ input.kg{font-family:var(--f-num);font-size:24px;font-weight:600;padding:8px 12p
 <div class="app">
   <header class="top">
     <div class="brand">NON <span>NEGOTIABLES</span></div>
-    <button class="iconbtn" data-act="sheet" data-sheet="backup" aria-label="Copia de seguridad" id="gear"></button>
+    <button class="iconbtn" data-act="sheet" data-sheet="backup" aria-label="Ajustes" id="gear"></button>
   </header>
   <main id="main" class="view"></main>
 </div>
@@ -221,6 +221,7 @@ const I = {
   grip:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.7"/><circle cx="15" cy="6" r="1.7"/><circle cx="9" cy="12" r="1.7"/><circle cx="15" cy="12" r="1.7"/><circle cx="9" cy="18" r="1.7"/><circle cx="15" cy="18" r="1.7"/></svg>',
   plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
   edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>',
+  gear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg>',
   save:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></svg>',
   grid:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5" fill="currentColor"/></svg>',
   dumbbell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6.5 6v12M17.5 6v12M3 9.5v5M21 9.5v5M6.5 12h11"/></svg>',
@@ -259,6 +260,7 @@ const snapshot = () => ({ app:'non-negotiables', v:1, habits:S.habits, goal:S.go
 function save(){
   try { localStorage.setItem(KEY, JSON.stringify(snapshot())); }
   catch(e){ toast('No se ha podido guardar en el móvil. ¿Queda espacio libre?'); }
+  mirror();
 }
 
 /* ---------- maths ---------- */
@@ -482,10 +484,33 @@ function sheetHabits(){
       <div class="span2"><button class="btn" type="submit">Añadir</button></div></form>
     <p class="note">Quitar un hábito no borra su historial ni su récord.</p>`;
 }
+function notifSection(){
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  let body;
+  if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)){
+    body = isStandalone
+      ? `<p class="note warn">Este móvil no admite avisos. En iPhone hace falta iOS 16.4 o superior.</p>`
+      : `<p class="note warn">Para activar los avisos, abre la app desde su icono en la pantalla de inicio.</p>`;
+  } else if (Notification.permission === 'denied'){
+    body = `<p class="note warn">Los avisos están bloqueados. Actívalos en Ajustes del iPhone → Notificaciones → Non Neg.</p>`;
+  } else if (S.push){
+    body = `<p class="note" style="color:var(--good)">Avisos activados en este móvil.</p>
+      <p class="note">Lunes 6:30 · pésate. Cada día 20:00 · rellena los hábitos.</p>
+      <div class="field"><label for="push-code">Código de este móvil</label><textarea id="push-code" readonly>${esc(S.push)}</textarea></div>
+      <div class="form"><button class="btn ghost" data-act="copypush">Copiar código</button><button class="btn ghost" data-act="sharepush">Enviar código</button></div>
+      <button class="btn ghost" data-act="testpush">Probar aviso aquí</button>`;
+  } else {
+    body = `<p class="note">Lunes a las 6:30 para pesarte y cada día a las 20:00 para rellenar los hábitos.</p>
+      <button class="btn" data-act="enablepush">Activar notificaciones</button>`;
+  }
+  return `<div class="sec-head" style="margin:6px 0 0"><h2>Notificaciones</h2></div>${body}`;
+}
 function sheetBackup(){
   const lb = S.lastBackup ? new Date(S.lastBackup) : null;
   const old = !lb || (Date.now()-lb.getTime()) > 14*864e5;
-  return `<div class="sec-head" style="margin:0"><h2>Copia de seguridad</h2><button class="iconbtn" data-act="close" aria-label="Cerrar">${I.x}</button></div>
+  return `<div class="sec-head" style="margin:0"><h2>Ajustes</h2><button class="iconbtn" data-act="close" aria-label="Cerrar">${I.x}</button></div>
+    ${notifSection()}
+    <div class="sec-head" style="margin:10px 0 0;padding-top:14px;border-top:1px solid var(--line)"><h2>Copia de seguridad</h2></div>
     <p class="note">Tus datos se guardan solo en este móvil. Haz una copia de vez en cuando por si cambias de móvil o borras la app.</p>
     <p class="note ${old?'warn':''}">Última copia: ${lb?`${lb.getDate()} ${MES[lb.getMonth()]} ${lb.getFullYear()}`:'nunca'}</p>
     <button class="btn" data-act="export">Guardar copia</button>
@@ -495,7 +520,7 @@ function sheetBackup(){
 }
 function sheet(){
   if (!S.sheet) return '';
-  return `<div class="scrim" data-act="close"><div class="sheet" role="dialog" aria-label="${S.sheet==='backup'?'Copia de seguridad':'Editar hábitos'}">${S.sheet==='backup'?sheetBackup():sheetHabits()}</div></div>`;
+  return `<div class="scrim" data-act="close"><div class="sheet" role="dialog" aria-label="${S.sheet==='backup'?'Ajustes':'Editar hábitos'}">${S.sheet==='backup'?sheetBackup():sheetHabits()}</div></div>`;
 }
 
 /* ---------- render ---------- */
@@ -539,6 +564,50 @@ async function importBackup(){
   try { d = JSON.parse(txt); } catch(e){ toast('Ese texto no es una copia válida.'); return; }
   if (!d || d.app!=='non-negotiables' || !Array.isArray(d.habits)){ toast('Ese archivo no es una copia de Non Negotiables.'); return; }
   apply(d); syncRecords(); save(); S.sheet=null; S.sel=todayK(); render(); toast('Copia restaurada');
+}
+
+/* ---------- notifications ---------- */
+const VAPID_PUBLIC = 'BNkN9QIx7dnE6C_mGR82UCF2mKmspy4HRWd0LnPY68xWL4BCp71CuiXqXXK5uFLwd082NyxHaFGcp3fmZPmgi1k';
+const b64u = s => { const p='='.repeat((4-s.length%4)%4); const raw=atob((s+p).replace(/-/g,'+').replace(/_/g,'/')); return Uint8Array.from(raw, c=>c.charCodeAt(0)); };
+const pushCode = sub => JSON.stringify({ ...sub.toJSON(), tz: Intl.DateTimeFormat().resolvedOptions().timeZone });
+async function refreshPush(){
+  try {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window) || Notification.permission!=='granted') { S.push=null; return; }
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.getSubscription();
+    S.push = sub ? pushCode(sub) : null;
+  } catch(e){ S.push=null; }
+  if (S.sheet==='backup') render();
+}
+async function enablePush(){
+  try {
+    const perm = await Notification.requestPermission();
+    if (perm!=='granted'){ render(); toast('Sin permiso no puedo enviarte avisos.'); return; }
+    const reg = await navigator.serviceWorker.ready;
+    let sub = await reg.pushManager.getSubscription();
+    if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly:true, applicationServerKey:b64u(VAPID_PUBLIC) });
+    S.push = pushCode(sub); render(); toast('Avisos activados. Envíame el código.');
+  } catch(e){ toast('No se han podido activar: '+(e && e.message || e)); }
+}
+async function copyPush(){
+  try { await navigator.clipboard.writeText(S.push); toast('Código copiado'); }
+  catch(e){ const t=document.getElementById('push-code'); if(t){ t.focus(); t.select(); } toast('Selecciona el texto y cópialo'); }
+}
+async function sharePush(){
+  try { await navigator.share({ title:'Código Non Negotiables', text:S.push }); } catch(e){ if(!(e && e.name==='AbortError')) copyPush(); }
+}
+async function testPush(){
+  try { const reg = await navigator.serviceWorker.ready; await reg.showNotification('⚖️ PÉSATEEE!!!! ⚖️', { body:'Así se verá el aviso del lunes 💪🔥', icon:'icons/icon-192.png', badge:'icons/icon-192.png', tag:'test' }); }
+  catch(e){ toast('No se ha podido mostrar el aviso de prueba.'); }
+}
+
+/* Mirror the data into IndexedDB so the notification can say what is still missing today. */
+function mirror(){
+  try {
+    const r = indexedDB.open('nn', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('kv');
+    r.onsuccess = () => { try { r.result.transaction('kv','readwrite').objectStore('kv').put(snapshot(),'data'); } catch(e){} };
+  } catch(e){}
 }
 
 /* ---------- habit editor: weekly target field, drag to reorder ---------- */
@@ -588,7 +657,7 @@ document.addEventListener('mousemove', e=>{ if(drag) dragMove(e.clientY); });
 document.addEventListener('mouseup', ()=>{ if(drag) dragEnd(); });
 
 /* ---------- events ---------- */
-document.getElementById('gear').innerHTML = I.save;
+document.getElementById('gear').innerHTML = I.gear;
 document.addEventListener('click', e=>{
   if (Date.now() < suppressClick) return;
   const b=e.target.closest('[data-act]'); if(!b) return;
@@ -603,6 +672,10 @@ document.addEventListener('click', e=>{
   else if (a==='edith'){ S.editing=b.dataset.id; S.armed=null; render(); const n=document.getElementById('e-name'); if(n) n.focus(); }
   else if (a==='canceledit'){ S.editing=null; render(); }
   else if (a==='export') exportBackup();
+  else if (a==='enablepush') enablePush();
+  else if (a==='copypush') copyPush();
+  else if (a==='sharepush') sharePush();
+  else if (a==='testpush') testPush();
   else if (a==='import') arm('import', importBackup);
   else if (a==='delw') arm('w'+b.dataset.k, ()=>{ S.weights=S.weights.filter(w=>w.date!==b.dataset.k); save(); render(); toast('Peso borrado'); });
   else if (a==='delh') arm('h'+b.dataset.id, ()=>{ S.habits=S.habits.filter(h=>h.id!==b.dataset.id); save(); render(); });
@@ -634,11 +707,12 @@ document.addEventListener('submit', e=>{
 });
 window.addEventListener('hashchange',()=>{ const t=location.hash.slice(1); if(['hoy','rachas','peso'].includes(t)){ S.tab=t; render(); } });
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ if(S.sel>todayK()) S.sel=todayK(); render(); } });
+if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e=>{ if(e.data && e.data.tab && ['hoy','peso','rachas'].includes(e.data.tab)){ S.tab=e.data.tab; S.sheet=null; render(); } });
 window.addEventListener('storage', e=>{ if(e.key===KEY){ load(); render(); } });
 
 /* ---------- boot ---------- */
 const t=location.hash.slice(1); if(['hoy','rachas','peso'].includes(t)) S.tab=t;
-load(); render();
+load(); render(); mirror(); refreshPush();
 if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{});
 if ('serviceWorker' in navigator) window.addEventListener('load', ()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 })();
