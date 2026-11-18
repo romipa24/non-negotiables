@@ -1,12 +1,11 @@
 name: Notificaciones
 
-# Times are UTC, set for the phone's time zone America/Costa_Rica (UTC-6, no daylight saving).
-# If the phone moves to another time zone, these lines and the map in notify/send.js change together.
+# Runs every hour; notify/send.js decides what to send using the phone's own time zone.
 on:
   schedule:
-    - cron: '27 12 * * 1'          # Monday 6:30 · weigh-in
-    - cron: '57 1 * * *'           # every day 20:00 · habits
-    - cron: '42 0-4,12-23 * * *'   # every hour 6:45 .. 22:45 · one mindset phrase each
+    - cron: '27 * * * *'   # lunes 6:30 · pesarse
+    - cron: '42 * * * *'   # cada hora de 6:45 a 22:45 · frases (si hay MENTALIDAD)
+    - cron: '57 * * * *'   # cada día 20:00 · hábitos
   workflow_dispatch:
     inputs:
       kind:

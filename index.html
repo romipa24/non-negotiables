@@ -373,8 +373,14 @@ function apply(d){
   S.books = Array.isArray(d.books) ? d.books.filter(b=>b && b.title && b.date).sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:(a.at||0)-(b.at||0)) : [];
   if (d.lastBackup) S.lastBackup = d.lastBackup;
   S.sound = d.sound !== false;
+  S.pushTz = d.pushTz || S.pushTz || null;
 }
-const snapshot = () => ({ app:'non-negotiables', v:1, habits:S.habits, goal:S.goal, days:S.days, weights:S.weights, records:S.records, books:S.books, lastBackup:S.lastBackup, sound:S.sound });
+const snapshot = () => ({ app:'non-negotiables', v:1, habits:S.habits, goal:S.goal, days:S.days, weights:S.weights, records:S.records, books:S.books, lastBackup:S.lastBackup, sound:S.sound, pushTz:S.pushTz });
+// The notification sender works out local times from the time zone saved in the phone code on GitHub.
+// When the phone changes time zone, the app asks for the code again so the reminders follow.
+const curTz = () => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch(e){ return ''; } };
+const tzName = tz => (tz||'').split('/').pop().replace(/_/g,' ');
+const tzMoved = () => !!(S.push && S.pushTz && curTz() && S.pushTz !== curTz());
 function save(){
   try { localStorage.setItem(KEY, JSON.stringify(snapshot())); }
   catch(e){ toast('No se ha podido guardar en el móvil. ¿Queda espacio libre?'); }
@@ -601,6 +607,10 @@ function weightChart(){
 function emptyHabits(){
   return `<div class="panel empty"><b>Sin hábitos todavía</b>Añade tus non negotiables para empezar a marcar.<div style="margin-top:14px;display:grid;gap:8px"><button class="btn" data-act="sheet" data-sheet="habits">Añadir hábitos</button><button class="btn ghost" data-act="sheet" data-sheet="backup">Restaurar una copia</button></div></div>`;
 }
+function tzBanner(){
+  if (!tzMoved()) return '';
+  return `<div class="banner"><span>Has cambiado de zona horaria (${esc(tzName(S.pushTz))} → ${esc(tzName(curTz()))}). Envía el código nuevo para que los avisos lleguen a tu hora.</span><button data-act="sheet" data-sheet="backup">Ver código</button></div>`;
+}
 function mondayBanner(){
   const tK=todayK();
   if (parse(tK).getDay()!==1 || S.weights.some(w=>w.date===tK)) return '';
@@ -609,7 +619,7 @@ function mondayBanner(){
 function viewHoy(){
   const tK=todayK(), sd=parse(S.sel), w=monday(sd), isToday=S.sel===tK;
   const ws=weekScore(w), [lv,lvc]=level(ws);
-  let h = mondayBanner();
+  let h = tzBanner() + mondayBanner();
   h += `<section class="dayhead"><div><div class="eyebrow">Semana ${isoWeek(sd)} · ${fmtShort(key(w))} – ${fmtShort(key(addDays(w,6)))}</div>
     <h1 class="h-display">${isToday?'Hoy':DIAS[sd.getDay()]} <span class="num" style="color:var(--bronze)">${sd.getDate()}</span></h1></div>
     <div class="daynav"><button class="iconbtn" data-act="day" data-d="-1" aria-label="Día anterior">${I.left}</button><button class="iconbtn" data-act="day" data-d="1" aria-label="Día siguiente" ${isToday?'disabled':''}>${I.right}</button></div></section>`;
@@ -734,6 +744,9 @@ function notifSection(){
   } else if (S.push){
     body = `<p class="note" style="color:var(--good)">Avisos activados en este móvil.</p>
       <p class="note">Lunes 6:30 · pésate. Cada día 20:00 · rellena los hábitos.</p>
+      <p class="note ${tzMoved()?'warn':''}">${tzMoved()
+        ? `Los avisos siguen con la hora de ${esc(tzName(S.pushTz))}. Toca «Enviar código» y pégalo en Claude (o en el secreto PUSH_SUBSCRIPTION) para pasarlos a la hora de ${esc(tzName(curTz()))}.`
+        : `Los avisos van con la hora de ${esc(tzName(S.pushTz||curTz()))}. Si cambias de país, la app te avisará.`}</p>
       <div class="field"><label for="push-code">Código de este móvil</label><textarea id="push-code" readonly>${esc(S.push)}</textarea></div>
       <div class="form"><button class="btn ghost" data-act="copypush">Copiar código</button><button class="btn ghost" data-act="sharepush">Enviar código</button></div>
       <button class="btn ghost" data-act="testpush">Probar aviso aquí</button>`;
@@ -916,12 +929,13 @@ async function enablePush(){
     S.push = pushCode(sub); render(); toast('Avisos activados. Envíame el código.');
   } catch(e){ toast('No se han podido activar: '+(e && e.message || e)); }
 }
+const markSent = () => { S.pushTz = curTz(); save(); render(); };
 async function copyPush(){
-  try { await navigator.clipboard.writeText(S.push); toast('Código copiado'); }
+  try { await navigator.clipboard.writeText(S.push); toast('Código copiado'); markSent(); }
   catch(e){ const t=document.getElementById('push-code'); if(t){ t.focus(); t.select(); } toast('Selecciona el texto y cópialo'); }
 }
 async function sharePush(){
-  try { await navigator.share({ title:'Código Non Negotiables', text:S.push }); } catch(e){ if(!(e && e.name==='AbortError')) copyPush(); }
+  try { await navigator.share({ title:'Código Non Negotiables', text:S.push }); markSent(); } catch(e){ if(!(e && e.name==='AbortError')) copyPush(); }
 }
 async function testPush(){
   try { const reg = await navigator.serviceWorker.ready; await reg.showNotification('⚖️ PÉSATEEE!!!! ⚖️', { body:'Así se verá el aviso del lunes 💪🔥', icon:'icons/icon-192.png', badge:'icons/icon-192.png', tag:'test' }); }
@@ -1066,7 +1080,9 @@ window.addEventListener('storage', e=>{ if(e.key===KEY){ load(); render(); } });
 
 /* ---------- boot ---------- */
 const t=location.hash.slice(1); if(TABS.includes(t)) S.tab=t;
-load(); render(); mirror(); refreshPush();
+load();
+if (!S.pushTz){ S.pushTz='America/Costa_Rica'; save(); } // the code saved on GitHub on 15/11/2026 was made in Costa Rica
+render(); mirror(); refreshPush();
 if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{});
 if ('serviceWorker' in navigator) window.addEventListener('load', ()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 })();
