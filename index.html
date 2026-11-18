@@ -169,7 +169,58 @@ input.kg{font-family:var(--f-num);font-size:24px;font-weight:600;padding:8px 12p
 .empty b{display:block;color:var(--fg);font-family:var(--f-display);font-size:24px;letter-spacing:.05em;font-weight:400;margin-bottom:4px}
 
 .tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(10,11,13,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-bottom:env(safe-area-inset-bottom,0px)}
-.tabs nav{max-width:540px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr)}
+.tabs nav{max-width:540px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+
+/* ---------- books: 40 in a year ---------- */
+.bk-hero{position:relative;overflow:hidden;padding:22px 18px 18px;border-radius:16px;border:1px solid rgba(201,136,59,.4);background:radial-gradient(90% 90% at 50% 0%,rgba(201,136,59,.24),transparent 65%),var(--panel);text-align:center}
+.bk-hero .eyebrow{color:var(--bronze-hi)}
+.bk-num{font-family:var(--f-display);font-size:clamp(120px,38vw,170px);line-height:.82;color:var(--fg);margin:10px 0 4px;text-shadow:0 0 40px rgba(237,179,106,.35)}
+.bk-num small{display:block;font-family:var(--f-body);font-size:13px;font-weight:600;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-top:10px;text-shadow:none}
+.bk-num.pop{animation:slam .55s cubic-bezier(.2,1.4,.3,1) both}
+.bk-line{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;margin-top:16px}
+.bk-end{font-family:var(--f-display);font-size:30px;line-height:1;min-width:34px}
+.bk-end.from{color:var(--muted)}
+.bk-end.to{color:var(--bronze-hi)}
+.bk-track{position:relative;height:14px;border-radius:7px;background:#1E2127;border:1px solid var(--line)}
+.bk-fill{position:absolute;left:0;top:0;bottom:0;border-radius:7px;background:linear-gradient(90deg,var(--bronze-lo),var(--bronze) 60%,var(--bronze-hi));box-shadow:0 0 16px rgba(237,179,106,.45);transition:width 1s linear}
+.bk-fill::after{content:"";position:absolute;right:-7px;top:50%;width:18px;height:18px;margin-top:-9px;border-radius:50%;background:#FFE2B0;box-shadow:0 0 0 4px rgba(237,179,106,.25),0 0 18px rgba(255,226,176,.9);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 8px rgba(237,179,106,0),0 0 26px rgba(255,226,176,1)}}
+.bk-meta{display:flex;justify-content:space-between;gap:10px;margin-top:12px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.bk-meta b{font-family:var(--f-num);font-size:15px;color:var(--fg);font-variant-numeric:tabular-nums}
+.bk-add{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:18px;border-radius:14px;background:linear-gradient(180deg,var(--bronze-hi),var(--bronze));color:#16110A;font-weight:800;letter-spacing:.14em;text-transform:uppercase;font-size:15px;box-shadow:0 10px 30px rgba(201,136,59,.3)}
+.bk-add svg{width:20px;height:20px}
+.bk-form{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px;border-radius:14px;border:1px solid rgba(237,179,106,.45);background:var(--panel-2)}
+.bk-status{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;padding:16px;border-radius:14px;border:1px solid var(--line);background:var(--panel)}
+.bk-status .ic{font-size:30px;line-height:1}
+.bk-status b{display:block;font-family:var(--f-display);font-size:24px;letter-spacing:.04em;font-weight:400;line-height:1.05}
+.bk-status p{margin:4px 0 0;font-size:13px;color:var(--muted)}
+.bk-status.ahead{border-color:rgba(237,179,106,.55);background:linear-gradient(135deg,rgba(201,136,59,.16),transparent 70%),var(--panel)}
+.bk-status.ahead b{color:var(--bronze-hi)}
+.bk-status.ok b{color:var(--good)}
+.bk-status.behind{border-color:rgba(194,85,63,.6);background:linear-gradient(135deg,rgba(194,85,63,.18),transparent 70%),var(--panel)}
+.bk-status.behind b{color:#E07A62}
+.bk-score{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.bk-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
+.slot{aspect-ratio:3/4;max-width:100%;border-radius:5px;display:grid;place-items:center;font-family:var(--f-num);font-size:13px;font-weight:600;color:var(--dim);background:#16181C;border:1px solid var(--line)}
+.slot.read{background:linear-gradient(180deg,var(--bronze-hi),var(--bronze));border-color:var(--bronze);color:#16110A;box-shadow:0 0 10px rgba(201,136,59,.3)}
+.slot.debt{border:1px dashed rgba(194,85,63,.8);color:#E07A62}
+.slot.now{border:2px solid var(--bronze-hi);color:var(--bronze-hi);animation:pulse2 1.6s ease-in-out infinite}
+.slot.read.now{color:#16110A}
+@keyframes pulse2{50%{box-shadow:0 0 14px rgba(237,179,106,.6)}}
+.enter .slot.read{animation:rise .4s ease-out both}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:11px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:13px;border-radius:2px;vertical-align:-2px;margin-right:5px;background:#16181C;border:1px solid var(--line)}
+.legend i.read{background:var(--bronze);border-color:var(--bronze)}
+.legend i.debt{border:1px dashed rgba(194,85,63,.8)}
+.legend i.now{border:2px solid var(--bronze-hi)}
+.blist{display:flex;flex-direction:column}
+.brow{display:grid;grid-template-columns:52px 1fr 36px;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.brow:last-child{border-bottom:0}
+.brow .bn{font-family:var(--f-display);font-size:34px;line-height:1;color:var(--bronze-hi);text-align:center}
+.brow .bt{min-width:0}
+.brow .bt b{display:block;font-weight:600;font-size:15px;overflow-wrap:anywhere}
+.brow .bt small{font-size:12px;color:var(--muted)}
+.brow.new{animation:rise .5s ease-out both;background:linear-gradient(90deg,rgba(201,136,59,.14),transparent)}
 .tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0 12px;color:var(--dim);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;position:relative}
 .tab svg{width:22px;height:22px}
 .tab.on{color:var(--bronze-hi)}
@@ -277,6 +328,7 @@ const I = {
   left:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
   right:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>',
   x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/><path d="M9 8h7"/></svg>',
   grip:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.7"/><circle cx="15" cy="6" r="1.7"/><circle cx="9" cy="12" r="1.7"/><circle cx="15" cy="12" r="1.7"/><circle cx="9" cy="18" r="1.7"/><circle cx="15" cy="18" r="1.7"/></svg>',
   plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
   edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>',
@@ -306,7 +358,8 @@ const parseKg = raw => { const s=String(raw||'').trim().toLowerCase().replace(/k
 
 /* ---------- state, saved on this phone ---------- */
 const KEY = 'nn-data-v1';
-const S = { habits:[], goal:null, days:{}, weights:[], records:{}, lastBackup:null, sound:true, sel:todayK(), tab:'hoy', sheet:null, armed:null, just:null, enter:true };
+const TABS = ['hoy','rachas','peso','libros'];
+const S = { habits:[], goal:null, days:{}, weights:[], records:{}, books:[], lastBackup:null, sound:true, sel:todayK(), tab:'hoy', sheet:null, armed:null, just:null, enter:true, addingBook:false, newBook:null };
 const P = { ring:0, xp:0 }; // last drawn values, so the ring and the XP bar animate from where they were
 function load(){
   try { const d = JSON.parse(localStorage.getItem(KEY)||'null'); if (d) apply(d); } catch(e){}
@@ -317,10 +370,11 @@ function apply(d){
   S.days = d.days && typeof d.days==='object' ? d.days : {};
   S.weights = Array.isArray(d.weights) ? d.weights.filter(w=>w && w.date && w.kg>0).sort((a,b)=>a.date<b.date?-1:1) : [];
   S.records = d.records && typeof d.records==='object' ? d.records : {};
+  S.books = Array.isArray(d.books) ? d.books.filter(b=>b && b.title && b.date).sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:(a.at||0)-(b.at||0)) : [];
   if (d.lastBackup) S.lastBackup = d.lastBackup;
   S.sound = d.sound !== false;
 }
-const snapshot = () => ({ app:'non-negotiables', v:1, habits:S.habits, goal:S.goal, days:S.days, weights:S.weights, records:S.records, lastBackup:S.lastBackup, sound:S.sound });
+const snapshot = () => ({ app:'non-negotiables', v:1, habits:S.habits, goal:S.goal, days:S.days, weights:S.weights, records:S.records, books:S.books, lastBackup:S.lastBackup, sound:S.sound });
 function save(){
   try { localStorage.setItem(KEY, JSON.stringify(snapshot())); }
   catch(e){ toast('No se ha podido guardar en el móvil. ¿Queda espacio libre?'); }
@@ -368,7 +422,7 @@ const RANKS = [[1,'RECLUTA'],[3,'SOLDADO'],[5,'GUERRERO'],[8,'GLADIADOR'],[12,'E
 function xpTotal(){
   let xp=0; const ids=new Set(S.habits.map(h=>h.id));
   for (const k in S.days){ let c=0; for (const id in S.days[k]) if (ids.has(id)) c++; xp += c*10; if (c && dayStats(k).perfect) xp += 50; }
-  return xp + S.weights.length*20;
+  return xp + S.weights.length*20 + S.books.length*100;
 }
 function levelInfo(){
   const xp=xpTotal(); let lv=1; while (75*lv*(lv+1) <= xp) lv++;
@@ -703,6 +757,75 @@ function sheetBackup(){
     <div class="field"><label for="imp-text">O pega aquí el texto de la copia</label><textarea id="imp-text" placeholder='{"app":"non-negotiables", …}'></textarea></div>
     <button class="btn ${S.armed==='import'?'danger':'ghost'}" data-act="import">${S.armed==='import'?'Toca otra vez: sustituye lo que hay ahora':'Restaurar copia'}</button>`;
 }
+/* ---------- books: the 40-book challenge, 31 May 2026 to 31 May 2027 ---------- */
+const CH = { start:new Date(2026,4,31).getTime(), end:new Date(2027,4,31).getTime(), goal:40, startK:'2026-05-31' };
+function pace(now=Date.now()){
+  const span=CH.end-CH.start, per=span/CH.goal, el=Math.min(Math.max(now-CH.start,0),span);
+  const exp=el/per, done=Math.min(CH.goal,Math.floor(exp+1e-9));
+  return { per, exp, done, cur:Math.min(CH.goal,done+1), frac: done>=CH.goal ? 1 : exp-done,
+    nextAt: CH.start+(done+1)*per, daysLeft: Math.max(0,(CH.end-now)/864e5), daysIn: el/864e5,
+    started: now>=CH.start, ended: now>=CH.end };
+}
+const deadlineOf = n => CH.start + n*(CH.end-CH.start)/CH.goal;          // when book n should be finished
+const plural = (n, a, b) => n===1 ? a : b;
+function dur(ms){ // 2d 08:14:33
+  const s=Math.max(0,Math.floor(ms/1000)), d=Math.floor(s/86400), h=Math.floor(s%86400/3600), m=Math.floor(s%3600/60), x=s%60;
+  return `${d}d ${pad(h)}:${pad(m)}:${pad(x)}`;
+}
+const fmtLong = ms => { const d=new Date(ms); return `${DIAS[d.getDay()].toLowerCase()} ${d.getDate()} ${MES[d.getMonth()]}`; };
+function bookStatus(){
+  const p=pace(), read=S.books.length, lead=read-p.done, left=CH.goal-read;
+  if (read>=CH.goal) return { cls:'ahead', ic:'🏆', t:'RETO CUMPLIDO', s:`${read} libros. Lo has hecho.` };
+  if (p.ended) return { cls:'behind', ic:'⏱️', t:`${read} DE 40`, s:'El reto ha terminado.' };
+  const need = left ? p.daysLeft/left : 0, needTxt = need>=1 ? `1 libro cada ${need.toFixed(1).replace('.',',')} días` : `${(1/need).toFixed(1).replace('.',',')} libros al día`;
+  if (lead>0) return { cls:'ahead', ic:'🔥', t:`+${lead} ${plural(lead,'LIBRO','LIBROS')} DE VENTAJA`, s:`Vas por delante del ritmo. El libro ${read+1} no te toca hasta el ${fmtLong(deadlineOf(read+1))}.` };
+  if (lead===0) return { cls:'ok', ic:'✅', t:'VAS AL RITMO', s:`Termina el libro ${read+1} antes del ${fmtLong(deadlineOf(read+1))} para no quedarte atrás.` };
+  return { cls:'behind', ic:'⚠️', t:`${-lead} ${plural(-lead,'LIBRO','LIBROS')} POR DETRÁS`, s:`Tienes que leer más. Para llegar a 40 te hace falta ${needTxt} desde hoy.` };
+}
+function viewLibros(){
+  const p=pace(), read=S.books.length, st=bookStatus(), tK=todayK();
+  const per=p.per/864e5, perTxt=`${Math.floor(per)} días y ${Math.round((per%1)*24)} h`;
+  let h = `<section class="dayhead"><div><div class="eyebrow">Reto 40 libros · 31 may 2026 → 31 may 2027</div><h1 class="h-display">Libros</h1></div></section>`;
+  h += `<section class="bk-hero"><div class="eyebrow">${p.ended?'Reto terminado':p.started?'Hoy deberías ir por el libro':'El reto empieza el 31 de mayo'}</div>
+    <div class="bk-num" id="bk-num" data-cur="${p.cur}">${p.cur}<small>de ${CH.goal}</small></div>
+    <div class="bk-line"><span class="bk-end from">${p.cur}</span><div class="bk-track"><div class="bk-fill" id="bk-fill" style="width:${(p.frac*100).toFixed(3)}%"></div></div><span class="bk-end to">${p.cur<CH.goal?p.cur+1:'🏁'}</span></div>
+    <div class="bk-meta"><span>${p.cur<CH.goal?`Pasas al libro ${p.cur+1} en`:'Final del reto en'} <b id="bk-count">${dur((p.cur<CH.goal?p.nextAt:CH.end)-Date.now())}</b></span><span>1 libro cada <b>${perTxt}</b></span></div></section>`;
+  if (S.addingBook) h += `<form class="bk-form" id="bform">
+      <div class="field span2"><label for="b-title">Título del libro que has terminado</label><input id="b-title" maxlength="140" placeholder="Ej. Hábitos atómicos" required autocomplete="off"></div>
+      <div class="field span2"><label for="b-date">Lo terminé el</label><input id="b-date" type="date" value="${tK}" min="${CH.startK}" max="${tK}" required></div>
+      <button class="btn ghost" type="button" data-act="cancelbook">Cancelar</button><button class="btn" type="submit">Guardar libro</button></form>`;
+  else h += `<button class="bk-add" data-act="addbook">${I.plus}Añadir libro</button>`;
+  h += `<section class="bk-status ${st.cls}"><span class="ic">${st.ic}</span><div><b>${st.t}</b><p>${st.s}</p></div></section>`;
+  const proj = p.daysIn>=14 && read ? Math.round(read/p.daysIn*365) : null;
+  h += `<section class="bk-score"><div class="stat"><span>Leídos</span><b class="num" data-count="${read}">${read}</b></div>
+    <div class="stat"><span>Al ritmo</span><b class="num">${p.done}</b></div>
+    <div class="stat"><span>${proj!=null?'A este ritmo':'Te quedan'}</span><b class="num ${proj!=null?(proj>=CH.goal?'up':'down'):''}">${proj!=null?proj:CH.goal-read}</b></div></section>`;
+  let g=''; for (let i=1;i<=CH.goal;i++){ const cls = i<=read ? 'read' : i<=p.done ? 'debt' : ''; g+=`<div class="slot ${cls} ${i===p.cur?'now':''}" style="${i<=read?`animation-delay:${i*18}ms`:''}">${i}</div>`; }
+  h += `<section class="panel"><div class="sec-head"><h2>El reto</h2><span class="eyebrow">${read}/${CH.goal} · ${Math.round(read/CH.goal*100)}%</span></div><div class="bk-grid">${g}</div>
+    <div class="legend"><span><i class="read"></i>Leído</span><span><i class="debt"></i>Debería estar leído</span><span><i class="now"></i>Donde deberías ir</span></div></section>`;
+  if (read){
+    const rows = S.books.map((b,i)=>{ const prev = i ? S.books[i-1].date : CH.startK, days=Math.max(0,Math.round((parse(b.date)-parse(prev))/864e5));
+      return {b, n:i+1, days}; }).reverse();
+    h += `<section class="panel"><div class="sec-head"><h2>Libros leídos</h2><span class="eyebrow">${read} ${plural(read,'libro','libros')}</span></div><div class="blist">` + rows.map(({b,n,days})=>{
+      const d0=parse(b.date);
+      return `<div class="brow ${S.newBook===b.id?'new':''}"><span class="bn">${n}</span><div class="bt"><b>${esc(b.title)}</b><small>${d0.getDate()} ${MES[d0.getMonth()]} ${d0.getFullYear()} · ${days===0?'el mismo día':`en ${days} ${plural(days,'día','días')}`}</small></div>
+        <button class="x ${S.armed==='b'+b.id?'armed':''}" data-act="delb" data-id="${b.id}" aria-label="${S.armed==='b'+b.id?'Toca otra vez para borrar':'Borrar'}">${I.x}</button></div>`; }).join('') + `</div></section>`;
+  } else {
+    h += `<section class="panel empty"><b>Aún no hay libros</b>Cada vez que termines uno, tócalo en «Añadir libro». Si ya llevas libros desde el 31 de mayo, añádelos con la fecha en que los acabaste.</section>`;
+  }
+  return h;
+}
+// Moves the line every second while the Libros tab is open, and flips the number when the next book starts.
+function tickBooks(){
+  if (S.tab!=='libros' || document.hidden) return;
+  const numEl=document.getElementById('bk-num'); if (!numEl) return;
+  const p=pace();
+  if (+numEl.dataset.cur !== p.cur){ render(); const n=document.getElementById('bk-num'); if (n) n.classList.add('pop'); sfx('milestone'); return; }
+  const f=document.getElementById('bk-fill'); if (f) f.style.width=(p.frac*100).toFixed(5)+'%';
+  const c=document.getElementById('bk-count'); if (c) c.textContent=dur((p.cur<CH.goal?p.nextAt:CH.end)-Date.now());
+}
+setInterval(tickBooks, 1000);
+
 function sheet(){
   if (!S.sheet) return '';
   return `<div class="scrim" data-act="close"><div class="sheet" role="dialog" aria-label="${S.sheet==='backup'?'Ajustes':'Editar hábitos'}">${S.sheet==='backup'?sheetBackup():sheetHabits()}</div></div>`;
@@ -710,21 +833,21 @@ function sheet(){
 
 /* ---------- render ---------- */
 function render(){
-  const keep={}; ['w-kg','w-date','goal','h-name','h-type','h-target','e-name','e-type','e-target','imp-text'].forEach(id=>{ const el=document.getElementById(id); if(el) keep[id]=el.value; });
+  const keep={}; ['w-kg','w-date','goal','h-name','h-type','h-target','e-name','e-type','e-target','imp-text','b-title','b-date'].forEach(id=>{ const el=document.getElementById(id); if(el) keep[id]=el.value; });
   const act=document.activeElement && document.activeElement.id;
   const fileInput=document.getElementById('imp-file'); const files=fileInput && fileInput.files;
   const main=document.getElementById('main');
-  main.innerHTML = S.tab==='rachas' ? viewRachas() : S.tab==='peso' ? viewPeso() : viewHoy();
+  main.innerHTML = S.tab==='rachas' ? viewRachas() : S.tab==='peso' ? viewPeso() : S.tab==='libros' ? viewLibros() : viewHoy();
   main.classList.toggle('enter', !!S.enter);
   document.getElementById('overlay').innerHTML = sheet();
   Object.entries(keep).forEach(([id,v])=>{ const el=document.getElementById(id); if(el) el.value=v; });
   syncTargetFields();
   if (files && files.length){ const f=document.getElementById('imp-file'); if (f) try { f.files=files; } catch(e){} }
   if (act){ const el=document.getElementById(act); if(el && el.type!=='file') el.focus(); }
-  document.getElementById('tabs').innerHTML = [['hoy','Hábitos',I.grid],['rachas','Rachas',I.flame],['peso','Peso',I.dumbbell]]
+  document.getElementById('tabs').innerHTML = [['hoy','Hábitos',I.grid],['rachas','Rachas',I.flame],['peso','Peso',I.dumbbell],['libros','Libros',I.book]]
     .map(([t,l,ic])=>`<button class="tab ${S.tab===t?'on':''}" data-act="tab" data-tab="${t}" aria-current="${S.tab===t?'page':'false'}">${ic}${l}</button>`).join('');
   postRender();
-  S.just=null; S.enter=false;
+  S.just=null; S.enter=false; S.newBook=null;
 }
 // Run the ring, the XP bar and the counters from their last drawn value to the new one.
 function postRender(){
@@ -884,6 +1007,9 @@ document.addEventListener('click', e=>{
   else if (a==='import') arm('import', importBackup);
   else if (a==='delw') arm('w'+b.dataset.k, ()=>{ S.weights=S.weights.filter(w=>w.date!==b.dataset.k); save(); render(); toast('Peso borrado'); });
   else if (a==='delh') arm('h'+b.dataset.id, ()=>{ S.habits=S.habits.filter(h=>h.id!==b.dataset.id); save(); render(); });
+  else if (a==='addbook'){ S.addingBook=true; sfx('tap'); render(); const t=document.getElementById('b-title'); if(t) t.focus(); }
+  else if (a==='cancelbook'){ S.addingBook=false; render(); }
+  else if (a==='delb') arm('b'+b.dataset.id, ()=>{ S.books=S.books.filter(x=>x.id!==b.dataset.id); save(); render(); toast('Libro borrado'); });
 });
 document.addEventListener('submit', e=>{
   e.preventDefault();
@@ -900,6 +1026,21 @@ document.addEventListener('submit', e=>{
     if (isNew) floatText(br.left+br.width/2, br.top, '+20 XP');
     if (prevMax && v>prevMax) celebrate({ kicker:'Peso', title:'NUEVO MÁXIMO', sub:`${kgf(v)} kg · +${kgf(v-prevMax)} sobre tu tope anterior`, sound:'perfect' });
     else { sfx('coin'); toast(`${kgf(v)} kg guardado`); }
+    const lvA=levelInfo(); if (lvA.lv>lvB) celebrate({ kicker:'Subes de nivel', title:'NIVEL '+lvA.lv, sub:lvA.rank, sound:'level' });
+  } else if (e.target.id==='bform'){
+    const title=document.getElementById('b-title').value.trim(), d=document.getElementById('b-date').value||todayK();
+    if (!title){ toast('Escribe el título del libro'); return; }
+    if (d<CH.startK || d>todayK()){ toast('La fecha tiene que estar entre el 31 de mayo y hoy'); return; }
+    const lvB=levelInfo().lv, leadB=S.books.length-pace().done;
+    const br=e.target.querySelector('button[type=submit]').getBoundingClientRect();
+    const book={ id:'b'+Date.now().toString(36)+Math.random().toString(36).slice(2,5), title, date:d, at:Date.now() };
+    S.books=S.books.concat(book).sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:(a.at||0)-(b.at||0));
+    const n=S.books.length, st=bookStatus();
+    S.addingBook=false; S.newBook=book.id; S.enter=true; save(); render(); window.scrollTo({top:0,behavior:reduce?'auto':'smooth'});
+    spawn(br.left+br.width/2, br.top, 30, {speed:9}); floatText(br.left+br.width/2, br.top, '+100 XP');
+    const title2 = n>=CH.goal ? 'RETO CUMPLIDO' : n%10===0 ? `${n} LIBROS` : `LIBRO ${n}`;
+    const back = leadB<0 && n-pace().done>=0 ? ' · Vuelves a ir al ritmo' : '';
+    celebrate({ kicker: n>=CH.goal ? '40 de 40' : `${n} de ${CH.goal}`, title:title2, sub:`${title}${back || ' · '+st.t.charAt(0)+st.t.slice(1).toLowerCase()}`, sound: n%10===0 ? 'level' : 'perfect' });
     const lvA=levelInfo(); if (lvA.lv>lvB) celebrate({ kicker:'Subes de nivel', title:'NIVEL '+lvA.lv, sub:lvA.rank, sound:'level' });
   } else if (e.target.id==='gform'){
     const raw=document.getElementById('goal').value.trim(); const g=raw===''?null:parseKg(raw);
@@ -918,13 +1059,13 @@ document.addEventListener('submit', e=>{
     save(); render(); toast(`${name} añadido`);
   }
 });
-window.addEventListener('hashchange',()=>{ const t=location.hash.slice(1); if(['hoy','rachas','peso'].includes(t)){ if(S.tab!==t) S.enter=true; S.tab=t; render(); } });
+window.addEventListener('hashchange',()=>{ const t=location.hash.slice(1); if(TABS.includes(t)){ if(S.tab!==t) S.enter=true; S.tab=t; render(); } });
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ if(S.sel>todayK()) S.sel=todayK(); render(); } });
-if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e=>{ if(e.data && e.data.tab && ['hoy','peso','rachas'].includes(e.data.tab)){ S.tab=e.data.tab; S.sheet=null; render(); } });
+if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e=>{ if(e.data && e.data.tab && TABS.includes(e.data.tab)){ S.tab=e.data.tab; S.sheet=null; render(); } });
 window.addEventListener('storage', e=>{ if(e.key===KEY){ load(); render(); } });
 
 /* ---------- boot ---------- */
-const t=location.hash.slice(1); if(['hoy','rachas','peso'].includes(t)) S.tab=t;
+const t=location.hash.slice(1); if(TABS.includes(t)) S.tab=t;
 load(); render(); mirror(); refreshPush();
 if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{});
 if ('serviceWorker' in navigator) window.addEventListener('load', ()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
