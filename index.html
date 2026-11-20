@@ -200,6 +200,27 @@ input.kg{font-family:var(--f-num);font-size:24px;font-weight:600;padding:8px 12p
 .bk-status.behind{border-color:rgba(194,85,63,.6);background:linear-gradient(135deg,rgba(194,85,63,.18),transparent 70%),var(--panel)}
 .bk-status.behind b{color:#E07A62}
 .bk-score{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.bk-pages{position:relative;overflow:hidden;padding:18px;border-radius:16px;border:1px solid var(--line);background:var(--panel)}
+.bk-pages.over{border-color:rgba(194,85,63,.6);background:radial-gradient(90% 120% at 100% 0%,rgba(194,85,63,.2),transparent 60%),var(--panel)}
+.bk-pages.under{border-color:rgba(237,179,106,.5);background:radial-gradient(90% 120% at 100% 0%,rgba(201,136,59,.2),transparent 60%),var(--panel)}
+.bk-pages .row1{display:flex;align-items:baseline;gap:10px;margin-top:6px}
+.bk-pages .big{font-family:var(--f-display);font-size:clamp(72px,24vw,104px);line-height:.85;color:var(--fg)}
+.bk-pages.over .big{color:#E07A62}
+.bk-pages.under .big{color:var(--bronze-hi)}
+.bk-pages .unit{font-family:var(--f-display);font-size:24px;letter-spacing:.05em;line-height:1.05}
+.bk-pages .unit small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+.bk-pages .msg{margin:10px 0 0;font-size:14px;font-weight:600}
+.bk-pages.over .msg{color:#E07A62}
+.bk-pages.under .msg{color:var(--bronze-hi)}
+.pgbars{display:grid;gap:8px;margin-top:14px}
+.pgbar{display:grid;grid-template-columns:86px 1fr 52px;gap:10px;align-items:center;font-size:12px;color:var(--muted)}
+.pgbar .tr{height:10px;border-radius:5px;background:#1E2127;overflow:hidden}
+.pgbar .tr i{display:block;height:100%;border-radius:5px;background:var(--dim);transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.pgbar.now .tr i{background:linear-gradient(90deg,var(--bronze),var(--bronze-hi))}
+.bk-pages.over .pgbar.now .tr i{background:linear-gradient(90deg,#8E3A2A,#E07A62)}
+.pgbar b{font-family:var(--f-num);font-size:16px;color:var(--fg);text-align:right;font-variant-numeric:tabular-nums}
+.bk-pages .foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+.bk-pages .foot b{font-family:var(--f-num);font-size:15px;color:var(--fg)}
 .bk-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
 .slot{aspect-ratio:3/4;max-width:100%;border-radius:5px;display:grid;place-items:center;font-family:var(--f-num);font-size:13px;font-weight:600;color:var(--dim);background:#16181C;border:1px solid var(--line)}
 .slot.read{background:linear-gradient(180deg,var(--bronze-hi),var(--bronze));border-color:var(--bronze);color:#16110A;box-shadow:0 0 10px rgba(201,136,59,.3)}
@@ -771,7 +792,15 @@ function sheetBackup(){
     <button class="btn ${S.armed==='import'?'danger':'ghost'}" data-act="import">${S.armed==='import'?'Toca otra vez: sustituye lo que hay ahora':'Restaurar copia'}</button>`;
 }
 /* ---------- books: the 40-book challenge, 31 May 2026 to 31 May 2027 ---------- */
-const CH = { start:new Date(2026,4,31).getTime(), end:new Date(2027,4,31).getTime(), goal:40, startK:'2026-05-31' };
+const CH = { start:new Date(2026,4,31).getTime(), end:new Date(2027,4,31).getTime(), goal:40, startK:'2026-05-31', pagesPerBook:400 };
+// Pages a day needed from today: pages of the books still to read / days left (today included).
+function pagesPlan(){
+  const read=Math.min(S.books.length, CH.goal), leftBooks=CH.goal-read, leftPages=leftBooks*CH.pagesPerBook;
+  const t=parse(todayK()).getTime(), daysLeft=Math.max(1, Math.round((CH.end-t)/864e5));
+  const totalDays=Math.round((CH.end-CH.start)/864e5), base=Math.ceil(CH.goal*CH.pagesPerBook/totalDays);
+  return { read, leftBooks, leftPages, daysLeft, base, need: leftBooks ? Math.ceil(leftPages/daysLeft) : 0, total: CH.goal*CH.pagesPerBook };
+}
+const nf = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // 6.800 · 12.000
 function pace(now=Date.now()){
   const span=CH.end-CH.start, per=span/CH.goal, el=Math.min(Math.max(now-CH.start,0),span);
   const exp=el/per, done=Math.min(CH.goal,Math.floor(exp+1e-9));
@@ -793,7 +822,7 @@ function bookStatus(){
   const need = left ? p.daysLeft/left : 0, needTxt = need>=1 ? `1 libro cada ${need.toFixed(1).replace('.',',')} días` : `${(1/need).toFixed(1).replace('.',',')} libros al día`;
   if (lead>0) return { cls:'ahead', ic:'🔥', t:`+${lead} ${plural(lead,'LIBRO','LIBROS')} DE VENTAJA`, s:`Vas por delante del ritmo. El libro ${read+1} no te toca hasta el ${fmtLong(deadlineOf(read+1))}.` };
   if (lead===0) return { cls:'ok', ic:'✅', t:'VAS AL RITMO', s:`Termina el libro ${read+1} antes del ${fmtLong(deadlineOf(read+1))} para no quedarte atrás.` };
-  return { cls:'behind', ic:'⚠️', t:`${-lead} ${plural(-lead,'LIBRO','LIBROS')} POR DETRÁS`, s:`Tienes que leer más. Para llegar a 40 te hace falta ${needTxt} desde hoy.` };
+  return { cls:'behind', ic:'⚠️', t:`${-lead} ${plural(-lead,'LIBRO','LIBROS')} POR DETRÁS`, s:`Tienes que leer más. Para llegar a 40 te hace falta ${needTxt} desde hoy, unas ${pagesPlan().need} páginas al día.` };
 }
 function viewLibros(){
   const p=pace(), read=S.books.length, st=bookStatus(), tK=todayK();
@@ -809,6 +838,20 @@ function viewLibros(){
       <button class="btn ghost" type="button" data-act="cancelbook">Cancelar</button><button class="btn" type="submit">Guardar libro</button></form>`;
   else h += `<button class="bk-add" data-act="addbook">${I.plus}Añadir libro</button>`;
   h += `<section class="bk-status ${st.cls}"><span class="ic">${st.ic}</span><div><b>${st.t}</b><p>${st.s}</p></div></section>`;
+  const pg=pagesPlan();
+  if (pg.leftBooks && !p.ended){
+    const diff=pg.need-pg.base, cls = diff>0 ? 'over' : diff<0 ? 'under' : '';
+    const msg = diff>0 ? `Deberías estar leyendo más: ${diff} ${plural(diff,'página','páginas')} al día por encima del ritmo normal.`
+              : diff<0 ? `Vas sobrado: ${-diff} ${plural(-diff,'página','páginas')} al día menos que el ritmo normal.`
+              : 'Justo al ritmo normal del reto.';
+    const max=Math.max(pg.need, pg.base);
+    h += `<section class="bk-pages ${cls}"><div class="eyebrow">Hoy deberías leer</div>
+      <div class="row1"><span class="big num" data-count="${pg.need}">${pg.need}</span><span class="unit">páginas<small>al día</small></span></div>
+      <p class="msg">${msg}</p>
+      <div class="pgbars"><div class="pgbar now"><span>Te toca ahora</span><div class="tr"><i style="width:${(pg.need/max*100).toFixed(1)}%"></i></div><b>${pg.need}</b></div>
+        <div class="pgbar"><span>Ritmo normal</span><div class="tr"><i style="width:${(pg.base/max*100).toFixed(1)}%"></i></div><b>${pg.base}</b></div></div>
+      <div class="foot"><span>Te quedan <b>${nf(pg.leftPages)}</b> págs · ${pg.leftBooks} ${plural(pg.leftBooks,'libro','libros')}</span><span><b>${pg.daysLeft}</b> días · ${CH.pagesPerBook} págs/libro</span></div></section>`;
+  }
   const proj = p.daysIn>=14 && read ? Math.round(read/p.daysIn*365) : null;
   h += `<section class="bk-score"><div class="stat"><span>Leídos</span><b class="num" data-count="${read}">${read}</b></div>
     <div class="stat"><span>Al ritmo</span><b class="num">${p.done}</b></div>
