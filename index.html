@@ -84,7 +84,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 
 .score{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center}
 .ring{position:relative;width:112px;height:112px}
-.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg) translateZ(0)}
 .ring .val{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
 .ring .val b{font-family:var(--f-num);font-size:34px;font-weight:700;line-height:1}
 .ring .val small{display:block;font-size:10px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-top:2px}
@@ -294,7 +294,7 @@ input.kg{font-family:var(--f-num);font-size:24px;font-weight:600;padding:8px 12p
 @keyframes flick{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.12) rotate(3deg)}}
 .cell.on:not(.sel){box-shadow:0 0 10px rgba(var(--a1),.35)}
 .ringfg{transition:stroke-dasharray .7s cubic-bezier(.2,.8,.2,1)}
-.ring.perfect svg{filter:drop-shadow(0 0 10px rgba(var(--a2),.65))}
+.ring.perfect{border-radius:50%;box-shadow:0 0 26px -4px rgba(var(--a2),.55)}
 .ring.perfect .val b{color:var(--acc-hi)}
 .xp{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center}
 .xp-lv{width:46px;height:46px;display:grid;place-items:center;background:linear-gradient(145deg,var(--acc-hi),var(--acc));color:var(--on-acc);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
@@ -345,13 +345,14 @@ body{background:radial-gradient(120% 45% at 50% -10%,rgba(var(--a1),.16),transpa
 .btn{border-radius:12px}
 
 /* ---------- header that shrinks on scroll, with a progress line ---------- */
-.top{transition:background .25s,box-shadow .25s}
-.top.small{background:rgba(var(--bg-rgb),.96);box-shadow:0 1px 0 var(--line);margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px))}
+.top{margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px));transition:background-color .25s,box-shadow .25s;background:var(--bg);box-shadow:0 1px 0 transparent;transform:translateZ(0)}
+.top.small{box-shadow:0 1px 0 var(--line)}
 .top.small .brand{transform:scale(.86)}
 .sprog{position:absolute;left:0;bottom:-1px;height:2px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,var(--acc),var(--acc-hi));box-shadow:0 0 10px rgba(var(--a2),.6)}
 
 /* ---------- scroll depth: blocks rise in from below and sink away at the top (driven from JS) ---------- */
 #main>*{transform-origin:50% 0}
+#main>.dk{backface-visibility:hidden;-webkit-backface-visibility:hidden}
 #main>.card{transform-origin:50% 0}
 #main>.txt{transform-origin:50% 100%}
 /* Scroll deck on the browser's own animation engine (runs off the main thread, smooth at the screen's refresh rate).
