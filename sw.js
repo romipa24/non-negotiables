@@ -1,8 +1,8 @@
 // Keeps the app working offline and shows the scheduled notifications.
 // The page itself is fetched fresh when there is a connection (so updates arrive)
 // and served from the cache when there is not.
-const CACHE = 'nn-v17';
-const SHELL = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
+const CACHE = 'nn-v18';
+const SHELL = ['./', './index.html', './manifest.webmanifest', './icons/icon-192-green.png', './icons/icon-512-green.png', './icons/apple-touch-icon-green.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)));
@@ -71,7 +71,7 @@ self.addEventListener('push', e => {
     else if (p.kind === 'phrase') { msg = { title: p.title || '', body: p.body || '' }; tab = 'hoy'; } // heading set by notify/send.js
     else { msg = { title: p.title || 'Non Negotiables', body: p.body || '' }; tab = 'hoy'; }
     await self.registration.showNotification(msg.title, {
-      body: msg.body, icon: 'icons/icon-192.png', badge: 'icons/icon-192.png',
+      body: msg.body, icon: 'icons/icon-192-green.png', badge: 'icons/icon-192-green.png',
       tag: (p.kind || 'nn') + (p.n ? '-' + p.n : ''), renotify: true, data: { tab }
     });
   })());

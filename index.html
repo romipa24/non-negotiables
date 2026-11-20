@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Non Neg">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/icon-192-green.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon-green.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap">
@@ -727,14 +727,14 @@ function viewHoy(){
     <div class="kv"><span>Semana</span><b>${pct(ws)}</b></div>
     <div class="kv"><span>Estado</span><span class="chip ${lvc}">${lv}</span></div></div>
     <p class="score-msg ${ds.perfect?'ok':''}">${msg}</p></section>`;
-  h += `<div class="sec-head" style="margin:4px 0 -4px"><h2>Tus hábitos</h2><button class="editbtn" data-act="sheet" data-sheet="habits">${I.edit}Añadir / quitar</button></div>`;
-  h += `<section class="habits">` + S.habits.map(x=>{
+  h += `<section class="habits-block"><div class="sec-head" style="margin:4px 0 12px"><h2>Tus hábitos</h2><button class="editbtn" data-act="sheet" data-sheet="habits">${I.edit}Añadir / quitar</button></div>`;
+  h += `<div class="habits">` + S.habits.map(x=>{
     const on=doneOn(S.sel,x.id), st=streak(x);
     const sub = x.type==='weekly' ? `${weekCount(x,w)}/${x.target} esta semana` : 'Cada día';
     return `<button class="habit ${on?'on':''} ${S.just===S.sel+'|'+x.id?'just':''}" data-act="toggle" data-k="${S.sel}" data-id="${x.id}" aria-pressed="${on}">
       <span class="box">${I.check}</span><span style="min-width:0"><div class="name">${esc(x.name)}</div><div class="sub">${sub}</div></span>
       <span class="streak" title="Racha actual">${I.flame}${st.cur}</span></button>`;
-  }).join('') + `<button class="addrow" data-act="sheet" data-sheet="habits">${I.plus}Añadir hábito</button></section>`;
+  }).join('') + `<button class="addrow" data-act="sheet" data-sheet="habits">${I.plus}Añadir hábito</button></div></section>`;
   let g = `<div></div>` + INI.map((l,i)=>`<div class="hd ${key(addDays(w,i))===tK?'today':''}">${l}</div>`).join('') + `<div></div>`;
   S.habits.forEach(x=>{
     g += `<div class="lbl">${esc(x.name)}</div>`;
@@ -1146,7 +1146,7 @@ async function sharePush(){
   try { await navigator.share({ title:'Código Non Negotiables', text:S.push }); markSent(); } catch(e){ if(!(e && e.name==='AbortError')) copyPush(); }
 }
 async function testPush(){
-  try { const reg = await navigator.serviceWorker.ready; await reg.showNotification('⚖️ PÉSATEEE!!!! ⚖️', { body:'Así se verá el aviso del lunes 💪🔥', icon:'icons/icon-192.png', badge:'icons/icon-192.png', tag:'test' }); }
+  try { const reg = await navigator.serviceWorker.ready; await reg.showNotification('⚖️ PÉSATEEE!!!! ⚖️', { body:'Así se verá el aviso del lunes 💪🔥', icon:'icons/icon-192-green.png', badge:'icons/icon-192-green.png', tag:'test' }); }
   catch(e){ toast('No se ha podido mostrar el aviso de prueba.'); }
 }
 
