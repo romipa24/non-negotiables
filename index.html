@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap">
 <script>/* apply the saved theme before first paint */try{var _d=JSON.parse(localStorage.getItem('nn-data-v1')||'{}'),_t=_d.theme||'dark';if(_t==='auto')_t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.setAttribute('data-theme',_t);}catch(e){document.documentElement.setAttribute('data-theme','dark');}</script>
 <style>
 /* Layout: one-column phone app. Sticky top bar, three views, fixed bottom tabs.
@@ -29,9 +29,9 @@
   --glow:#C8FFDD; --on-acc:#03130A; --track:#15231B; --slot:#0E1813;
   --good:#7FD69B; --bad:#E0573F; --bad-hi:#FF8A70; --bad-lo:#7A2A1C;
   --statusbar:#060B08; --shadow:0,0,0; --panel-sh:inset 0 1px 0 rgba(255,255,255,.035);
-  --f-display:"Unbounded","Arial Black",system-ui,sans-serif;
-  --f-body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --f-num:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --f-display:"Bebas Neue",Impact,"Arial Narrow",sans-serif;
+  --f-body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-num:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
   color-scheme:dark;
 }
 :root[data-theme="light"]{
@@ -329,7 +329,7 @@ input.kg{font-family:var(--f-num);font-size:24px;font-weight:600;padding:8px 12p
 .view.enter>*:nth-child(4){animation-delay:.12s}
 .view.enter>*:nth-child(5){animation-delay:.16s}
 .view.enter>*:nth-child(n+6){animation-delay:.2s}
-@keyframes rise{from{opacity:0;transform:translateY(14px)}}
+@keyframes rise{from{opacity:0;transform:perspective(700px) translateY(60px) translateZ(-120px) rotateX(-38deg)}}
 .enter .wline{stroke-dasharray:1;animation:draw 1.1s ease-out both}
 @keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
 .enter .bar30{transform-box:fill-box;transform-origin:50% 100%;animation:grow .5s ease-out both}
@@ -338,37 +338,9 @@ input.kg{font-family:var(--f-num);font-size:24px;font-weight:600;padding:8px 12p
 @keyframes pop{0%{transform:scale(.85)}60%{transform:scale(1.1)}100%{transform:scale(1)}}
 .habit.on.just .box{animation:pop .28s ease-out}
 
-/* ---------- type v2: Unbounded (wide display) · Manrope (reading) · JetBrains Mono (data and labels) ---------- */
-body{font-size:15px;letter-spacing:-.005em}
-.brand{font-family:var(--f-display);font-weight:800;font-size:17px;letter-spacing:-.01em;transform-origin:0 50%;transition:transform .25s ease}
-.brand span{color:var(--acc-hi)}
-.h-display{font-weight:800;letter-spacing:-.025em;line-height:1}
-.dayhead h1{font-size:clamp(30px,9vw,42px)}
-.dayhead h1 .num{font-family:var(--f-display);font-weight:800}
-.sec-head h2{font-weight:700;font-size:15px;letter-spacing:-.01em}
-.eyebrow,.chip,.kv span,.stat span,.field label,.legend,.linkbtn,.editbtn,.tab,.cel-k,.cel-x,.xp-n,.bk-num small,.pgbar span,.habit .sub,.scard .n span,.ring .val small{font-family:var(--f-num);letter-spacing:.06em}
-.eyebrow{font-size:10.5px;font-weight:500}
-.tab{font-size:9.5px;font-weight:700}
-.chip{font-size:10px}
-.num,.kv b,.stat b,.wgrid .pc,.habit .streak,.log .kgv,.log .dl,.best b,.bk-meta b,.pgbar b,.bk-pages .foot b,.ring .val b,.xp-lv b,.floatxp,input.kg,.slot{font-family:var(--f-num);letter-spacing:-.02em}
-.ring .val b{font-family:var(--f-display);font-weight:800;font-size:26px;letter-spacing:-.03em}
-.kv b,.stat b{font-weight:700}
-.hero .big,.scard .n b,.bk-num,.bk-end,.bk-status b,.bk-pages .big,.bk-pages .unit,.brow .bn,.empty b,.xp-rank,.flash b,.cel-t,.hero .unit{font-family:var(--f-display);font-weight:800;letter-spacing:-.03em}
-.hero .big{font-size:76px;line-height:.9}
-.hero .unit{font-size:16px;font-weight:700;letter-spacing:-.01em}
-.scard .n b{font-size:38px}
-.bk-num{font-size:clamp(92px,30vw,136px);line-height:.9}
-.bk-end{font-size:20px}
-.bk-status b{font-size:16px;line-height:1.15}
-.bk-pages .big{font-size:clamp(60px,19vw,84px)}
-.bk-pages .unit{font-size:15px;font-weight:700;letter-spacing:-.01em}
-.brow .bn{font-size:22px}
-.empty b{font-size:17px}
-.xp-rank{font-size:14px;font-weight:700;letter-spacing:.02em}
-.flash b{font-size:14px}
-.cel-t{font-size:clamp(38px,12vw,70px);line-height:1;text-wrap:balance}
-.habit .name{font-weight:700;letter-spacing:-.01em}
-.btn,.bk-add,.banner button{font-family:var(--f-num);letter-spacing:.06em}
+/* header brand shrinks on scroll */
+.brand{transform-origin:0 50%;transition:transform .25s ease}
+.seg button{font-family:var(--f-num);font-size:13px}
 
 /* ---------- surfaces ---------- */
 body{background:radial-gradient(120% 45% at 50% -10%,rgba(var(--a1),.16),transparent 60%),radial-gradient(60% 30% at 100% 40%,rgba(var(--a1),.05),transparent 70%),var(--bg);background-attachment:fixed}
@@ -394,13 +366,14 @@ body{background:radial-gradient(120% 45% at 50% -10%,rgba(var(--a1),.16),transpa
 .tab.on svg{transform:translateY(-1px) scale(1.08);transition:transform .25s}
 
 /* ---------- tab change: slide in the direction you moved ---------- */
-.view.from-r>*{animation:slideL .42s cubic-bezier(.2,.8,.2,1) both}
-.view.from-l>*{animation:slideR .42s cubic-bezier(.2,.8,.2,1) both}
+.view.from-r>*{animation:slideL .62s cubic-bezier(.16,1,.3,1) both;transform-origin:0% 50%}
+.view.from-l>*{animation:slideR .62s cubic-bezier(.16,1,.3,1) both;transform-origin:100% 50%}
 .view.from-r>*:nth-child(2),.view.from-l>*:nth-child(2){animation-delay:.03s}
 .view.from-r>*:nth-child(3),.view.from-l>*:nth-child(3){animation-delay:.06s}
-.view.from-r>*:nth-child(n+4),.view.from-l>*:nth-child(n+4){animation-delay:.09s}
-@keyframes slideL{from{opacity:0;transform:translateX(42px)}}
-@keyframes slideR{from{opacity:0;transform:translateX(-42px)}}
+.view.from-r>*:nth-child(4),.view.from-l>*:nth-child(4){animation-delay:.09s}
+.view.from-r>*:nth-child(n+5),.view.from-l>*:nth-child(n+5){animation-delay:.12s}
+@keyframes slideL{from{opacity:0;transform:perspective(700px) translateX(90px) translateZ(-160px) rotateY(-62deg)}}
+@keyframes slideR{from{opacity:0;transform:perspective(700px) translateX(-90px) translateZ(-160px) rotateY(62deg)}}
 
 /* ---------- theme switch ---------- */
 .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border-radius:14px;background:var(--panel-2);border:1px solid var(--line)}
@@ -1024,25 +997,31 @@ function scrollFx(){
   const top=document.querySelector('.top'); if (top) top.classList.toggle('small', y>24);
   const pr=document.getElementById('sprog'); if (pr) pr.style.transform=`scaleX(${Math.min(1,y/max).toFixed(4)})`;
   if (reduce) return;
+  // A 3D drum. The middle of the screen is the "focus": a block there sits flat and full size.
+  // As a block moves towards the top or bottom edge it swings back on a hinge, twists to its side,
+  // sinks into the screen and fades, like cards on a rotating cylinder. Fast flicks add a lean.
   const headH = top ? top.getBoundingClientRect().bottom : 60;
+  const footH = vh - 78, span = Math.max(240, footH - headH);
+  const topZ = headH + span*.26, botZ = footH - span*.26;          // between these two lines everything sits flat
+  const fTop = Math.min(1, y/140), fBot = Math.min(1, (max - y)/140); // at the very top/bottom of the page nothing stays tilted
+  vel += ((y - lastY) - vel) * .35; lastY = y; lean += (Math.max(-14, Math.min(14, -vel * .45)) - lean) * .25;
+  let i = 0;
   for (const el of document.getElementById('main').children){
     // layout position without our own transform, so the effect never feeds back into itself
     let t=0, n=el; while (n){ t+=n.offsetTop; n=n.offsetParent; }
-    const r={ top:t-y, height:el.offsetHeight }; r.bottom=r.top+r.height;
-    // entering from the bottom: 0 (just below the fold) -> 1 (a third of the screen in)
-    const e=Math.min(1,Math.max(0,(vh-r.top)/(vh*.32)));
-    // leaving at the top: starts when its bottom edge reaches the upper third, 1 when it is gone,
-    // so a tall list keeps its full size while you are still using it
-    const band=Math.min(vh*.36, Math.max(140, r.height));
-    const x= r.top>=headH ? 0 : Math.min(1,Math.max(0,(headH+band-r.bottom)/band));
-    const ty=(1-e)*56 + x*36;
-    const sc=(0.92+0.08*e)*(1-0.07*x);
-    const op=Math.min(0.25+0.75*e, 1-0.6*x);
-    const rx=x*7 - (1-e)*6;
-    el.style.transform = (e===1 && x===0) ? '' : `perspective(900px) translateY(${ty.toFixed(1)}px) rotateX(${rx.toFixed(2)}deg) scale(${sc.toFixed(4)})`;
-    el.style.opacity = op>=.999 ? '' : op.toFixed(3);
+    const rt=t-y, rb=rt+el.offsetHeight;
+    // <0 leaving at the top, >0 still coming in at the bottom, 0 in the middle band
+    const d = rt>botZ ? (rt-botZ)/(footH-botZ)*fBot : rb<topZ ? (rb-topZ)/(topZ-headH)*fTop : 0;
+    const a = Math.max(-1.25, Math.min(1.25, d)), m = Math.abs(a);
+    const side = (i++ % 2) ? 1 : -1;
+    if (m < .002 && Math.abs(lean) < .05){ el.style.transform=''; el.style.opacity=''; el.style.transformOrigin=''; continue; }
+    el.style.transformOrigin = a>0 ? '50% 0%' : '50% 100%';
+    el.style.transform = `perspective(760px) translateZ(${(-m*170).toFixed(1)}px) rotateX(${(-a*58).toFixed(2)}deg) rotateY(${(side*a*18).toFixed(2)}deg) rotateZ(${(side*a*4).toFixed(2)}deg) skewY(${lean.toFixed(2)}deg) scale(${(1-m*.12).toFixed(4)})`;
+    el.style.opacity = Math.max(.12, 1-m*.7).toFixed(3);
   }
+  if (Math.abs(vel) > .2 || Math.abs(lean) > .05) queueFx();      // keep easing the lean back to 0 after a flick
 }
+let vel=0, lastY=scrollY, lean=0;
 const queueFx=()=>{ if(!sfxQueued){ sfxQueued=true; requestAnimationFrame(scrollFx); } };
 window.addEventListener('scroll', queueFx, {passive:true});
 window.addEventListener('resize', queueFx);
